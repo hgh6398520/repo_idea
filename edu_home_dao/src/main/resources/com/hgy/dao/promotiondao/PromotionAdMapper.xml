@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgy.dao.promotiondao.PromotionAdMapper">
+    <!--分页查询广告信息-->
+    <resultMap id="promotionAdMap" type="promotionAd">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="spaceId" column="spaceId"/>
+        <result property="keyword" column="keyword"/>
+        <result property="htmlContent" column="htmlContent"/>
+        <result property="text" column="text"/>
+        <result property="link" column="link"/>
+        <result property="startTime" column="startTime"/>
+        <result property="endTime" column="endTime"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="status" column="status"/>
+        <result property="priority" column="priority"/>
+        <result property="img" column="img"/>
+
+        <association property="promotionSpace" select="com.hgy.dao.promotiondao.PromotionSpaceMapper.findAllPromotionSpaceById"
+                     column="spaceId" javaType="promotionSpace"/>
+    </resultMap>
+    <select id="findAllPromotionAdByPage" resultMap="promotionAdMap">
+        SELECT * FROM promotion_ad
+    </select>
+
+    <!--修改广告状态-->
+    <update id="updatePromotionAdStatus" parameterType="promotionAd">
+        UPDATE promotion_ad SET status = #{status}, updateTime = #{updateTime} WHERE id = #{id}
+    </update>
+</mapper>

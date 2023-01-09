@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgy.dao.coursedao.CourseContentMapper">
+    <resultMap id="sectionAndLessonResultMap" type="courseSection">
+        <id property="id" column="id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="sectionName" column="section_name"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="status" column="status"/>
+
+        <collection property="lessons" ofType="courseLesson">
+            <id property="id" column="lesson_id"/>
+            <result property="courseId" column="course_id"/>
+            <result property="sectionId" column="section_id"/>
+            <result property="theme" column="theme"/>
+            <result property="duration" column="duration"/>
+            <result property="isFree" column="is_free"/>
+            <result property="createTime" column="lesson_create_time"/>
+            <result property="updateTime" column="lesson_update_time"/>
+            <result property="isDel" column="lesson_is_del"/>
+            <result property="orderNum" column="lesson_order_num"/>
+            <result property="status" column="lesson_status"/>
+        </collection>
+    </resultMap>
+    <select id="findSectionAndLessonByCourseId" parameterType="int" resultMap="sectionAndLessonResultMap">
+        SELECT cs.*, cl.id lesson_id, cl.section_id, cl.theme, cl.duration, cl.is_free,
+               cl.create_time lesson_create_time, cl.update_time lesson_update_time,
+               cl.is_del lesson_is_del, cl.order_num lesson_order_num, cl.status lesson_status
+        FROM course_section cs
+            LEFT JOIN course_lesson cl ON cs.id = cl.section_id
+        WHERE cs.course_id = #{id}
+        ORDER BY cs.order_num
+    </select>
+
+    <select id="findCourseById" parameterType="int" resultType="course">
+        SELECT * FROM course WHERE id = #{id}
+    </select>
+
+    <insert id="addCourseSection" parameterType="courseSection">
+        INSERT INTO course_section(
+            course_id, section_name, description, create_time, update_time,
+            order_num, status)
+        VALUES(#{courseId}, #{sectionName}, #{description}, #{createTime},
+            #{updateTime}, #{orderNum}, #{status})
+    </insert>
+
+    <update id="updateCourseSection" parameterType="courseSection">
+        UPDATE course_section SET
+            section_name = #{sectionName}, description = #{description},
+            order_num = #{orderNum}, update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateCourseSectionStatus" parameterType="courseSection">
+        UPDATE course_section SET status = #{status}, update_time = #{updateTime} WHERE id = #{id}
+    </update>
+</mapper>
